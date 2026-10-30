@@ -1,3 +1,5 @@
+![Banner](banner.png)
+
 # crypto-timing-attack-detector
 
 Measures the average execution time of four basic cryptographic operations over repeated runs and logs the result, as a simple demonstration of timing measurement. It reports one average time per run of the program. It does not compare timing distributions, run statistical tests, or produce a vulnerability verdict.
