@@ -1,4 +1,5 @@
 import argparse
+import hashlib
 import logging
 import time
 import secrets
@@ -95,7 +96,10 @@ def aes_cbc_encrypt_timing(message, key, num_runs):
     Encrypts a message using AES-CBC and measures the execution time.
     """
     times = []
-    key_bytes = key.encode('utf-8')
+    # AES requires a 16, 24, or 32 byte key, while the CLI accepts an
+    # arbitrary string (the default is 10 bytes). Derive a fixed 32 byte
+    # AES-256 key from the supplied string so any key string works.
+    key_bytes = hashlib.sha256(key.encode('utf-8')).digest()
     message_bytes = message.encode('utf-8')
 
     # Pad the message to be a multiple of the block size
@@ -154,6 +158,9 @@ def main():
     args = setup_argparse()
 
     try:
+        if args.num_runs < 1:
+            raise ValueError("--num_runs must be at least 1.")
+
         if args.operation == "compare_strings":
             if not isinstance(args.string1, str) or not isinstance(args.string2, str):
                 raise ValueError("String inputs must be strings.")
