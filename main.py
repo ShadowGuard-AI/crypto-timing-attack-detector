@@ -1,6 +1,7 @@
 import argparse
 import hashlib
 import logging
+import sys
 import time
 import secrets
 from cryptography.hazmat.primitives import hashes
@@ -9,7 +10,6 @@ from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hmac
-import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -131,18 +131,18 @@ def pbkdf2_derive_timing(password, salt, num_runs):
 
     for _ in range(num_runs):
         start_time = time.perf_counter()
-        try:
-             kdf = PBKDF2HMAC(
-                algorithm=hashes.SHA256(),
-                length=32,
-                salt=salt_bytes,
-                iterations=100000,
-                backend=default_backend()
-             )
-             key = kdf.derive(password_bytes)
-        except Exception as e:
-            logging.error(f"PBKDF2 derivation error: {e}")
-            return []
+        # No try here on purpose: the old version caught a derivation
+        # failure, returned an empty list the caller ignored, and the
+        # run still exited 0. A failed derivation now propagates to
+        # main, which reports it as the failure it is.
+        kdf = PBKDF2HMAC(
+            algorithm=hashes.SHA256(),
+            length=32,
+            salt=salt_bytes,
+            iterations=100000,
+            backend=default_backend()
+         )
+        kdf.derive(password_bytes)
         end_time = time.perf_counter()
         times.append(end_time - start_time)
 
@@ -185,9 +185,13 @@ def main():
             logging.error(f"Invalid operation: {args.operation}")
 
     except ValueError as e:
+        # Validation used to end here with exit code 0, so a rejected
+        # --num_runs looked like a successful measurement to a script.
         logging.error(f"Input error: {e}")
+        sys.exit(1)
     except Exception as e:
         logging.exception("An unexpected error occurred:")
+        sys.exit(1)
 
 
 if __name__ == "__main__":

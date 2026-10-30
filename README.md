@@ -62,7 +62,7 @@ Example output (timestamps and times vary):
 ## Limitations
 
 - Only the average time is logged. Individual run times are returned by the library functions but are not printed, and no minimum, maximum, or variance is reported.
-- Input errors (for example `--num_runs 0`) are logged as errors and the program still exits with status 0.
+- Input errors (for example `--num_runs 0`) are logged as errors and the program exits with status 1.
 - Timings at this scale are dominated by interpreter and library overhead, so the averages demonstrate measurement only and are not evidence that an operation is or is not exploitable.
 - There are no bundled tests.
 
