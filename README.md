@@ -68,7 +68,7 @@ Example output (timestamps and times vary):
 
 ## License
 
-Copyright (c) ShadowStrikeHQ. No license file is included in this repository.
+This project is released under the MIT License. See the [LICENSE](LICENSE) file in this repository for the full text.
 
 ## Diagrams and maps
 
