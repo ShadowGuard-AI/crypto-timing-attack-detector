@@ -69,3 +69,9 @@ Example output (timestamps and times vary):
 ## License
 
 Copyright (c) ShadowStrikeHQ. No license file is included in this repository.
+
+## Diagrams and maps
+
+I drew the system out in [crypto-timing-attack-detector-Visuals](crypto-timing-attack-detector-Visuals/): an architecture diagram, a sequence diagram of one timed run, a flowchart of a run, and a product map, with the written product map, statistics with citations, and the roadmap in [VISUAL.md](crypto-timing-attack-detector-Visuals/VISUAL.md). Every sheet also ships as a PNG photograph of the paper page beside its SVG.
+
+![crypto-timing-attack-detector architecture](crypto-timing-attack-detector-Visuals/architecture.svg)
