@@ -47,6 +47,11 @@ def compare_strings_timing(string1, string2, num_runs):
         end_time = time.perf_counter()
         times.append(end_time - start_time)
 
+    # Only this one pair is ever timed, and only its average is
+    # reported. A timing difference only shows up against another
+    # input, so reading a leak out of this tool means running it at
+    # least twice with different second strings and comparing the
+    # averages myself. The returned list is discarded by main.
     average_time = sum(times) / len(times)
     logging.info(f"Average time for string comparison: {average_time:.6f} seconds")
     return times
@@ -78,6 +83,11 @@ def hmac_verify_timing(message, key, num_runs):
     for _ in range(num_runs):
         start_time = time.perf_counter()
         try:
+            # Each timed run computes a fresh HMAC over the message and
+            # then verifies it. The hashing is most of the measured
+            # time, so the figure is the cost of computing an HMAC, not
+            # the cost of comparing one, and the value verified against
+            # was made from the same message, so it always matches.
             h = hmac.HMAC(key_bytes, hashes.SHA256(), backend=default_backend())
             h.update(message_bytes)
             h.verify(hmac_value)
@@ -107,6 +117,9 @@ def aes_cbc_encrypt_timing(message, key, num_runs):
     padded_data = padder.update(message_bytes) + padder.finalize()
 
     # Generate a random IV
+    # The IV and the padded data are made once, outside the loop, so
+    # neither padding nor IV generation is inside any timed run, and
+    # every run encrypts identical bytes under the same IV.
     iv = secrets.token_bytes(16)
 
     for _ in range(num_runs):
